@@ -1,0 +1,6 @@
+init_config:
+
+instances:
+  - server: 192.0.2.10
+    port: 50051
+    service: helloworld.Greeter

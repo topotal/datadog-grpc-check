@@ -1,7 +1,7 @@
 on: push
 
 jobs:
-  test:
+  unit-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,3 +19,34 @@ jobs:
 
       - name: Run test
         run: python3 -m unittest tests/test_grpc_check.py
+
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Upgrade pip
+        run: pip install --upgrade pip
+
+      - name: Install datadog-checks-base
+        run: pip install datadog-checks-base[deps]
+
+      - name: Install gRPC Libraries
+        run: pip install -r requirements_dev.txt
+
+      - name: Download grpc-health-probe
+        run: |
+          echo ${PATH}
+          wget -qO grpc-health-probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.8/grpc_health_probe-linux-amd64
+          chmod +x grpc-health-probe
+          mv grpc-health-probe /usr/local/bin/
+          which grpc-health-probe
+
+      - name: Run test
+        run: |
+          python3 -m unittest tests/test_grpc_health_probe.py

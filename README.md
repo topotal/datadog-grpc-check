@@ -6,6 +6,17 @@ Agent check for Datadog that checks endpoint implemented [gRPC Health Checking P
 
 datadog-grpc-check uses [grpc-health-probe](https://github.com/grpc-ecosystem/grpc-health-probe) internal.
 
+## Configuration
+
+- [Configuration sample](conf.d/grpc_check.yaml.example)
+
+| Setting           | Description |
+| ------------------| ----------- |
+| server (Required) | Hostname or IP address of gRPC endpoint to check. |
+| port (Required)   | Port to check. |
+| connect_timeout   | Value of `--connect-timeout` option of grpc-health-probe (second). see [grpc-ecosystem/grpc-health-probe](https://github.com/grpc-ecosystem/grpc-health-probe#other-available-flags) |
+| rpc_timeout       | Value of `--rpc-timeout` option of grpc-health-probe (second). see [grpc-ecosystem/grpc-health-probe](https://github.com/grpc-ecosystem/grpc-health-probe#other-available-flags) |
+
 ## Metrics
 
 | Metrics                            | Description |

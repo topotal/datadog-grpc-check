@@ -21,5 +21,5 @@ datadog-grpc-check uses [grpc-health-probe](https://github.com/grpc-ecosystem/gr
 
 | Metrics                            | Description |
 | ---------------------------------- | ----------- |
-| network.grpc.response_time (gauge) | The response time (second) of an gRPC request to given target. |
-| network.grpc.can_connect (guage)   | 1 if checks can connect and status success, 0 otherwise. |
+| network.grpc.response_time (gauge) | The response time (second) of a gRPC request to given target. |
+| network.grpc.can_connect (gauge)   | 1 if checks can connect and status success, 0 otherwise. |

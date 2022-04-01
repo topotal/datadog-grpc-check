@@ -2,7 +2,7 @@ from concurrent import futures
 import os
 import sys
 import unittest
-from unittest.mock import ANY, Mock, patch
+from unittest.mock import ANY, patch
 
 import grpc
 from grpc_health.v1 import health
@@ -36,8 +36,9 @@ class TestGrpcHealthProbe(unittest.TestCase):
         check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
         check.check(instance)
 
-        m_gauge.assert_any_call('network.grpc.can_connect', 1, tags=['addr:localhost:50051', 'service:helloworld.GreeterHealthy'])
-        m_gauge.assert_any_call('network.grpc.response_time', ANY, tags=['addr:localhost:50051', 'service:helloworld.GreeterHealthy'])
+        expected_tags = ['addr:localhost:50051', 'service:helloworld.GreeterHealthy']
+        m_gauge.assert_any_call('network.grpc.can_connect', 1, tags=expected_tags)
+        m_gauge.assert_any_call('network.grpc.response_time', ANY, tags=expected_tags)
 
     @patch('grpc_check.GrpcCheck._gauge')
     def test_grpc_health_probe_unhealty(self, m_gauge):
@@ -49,7 +50,8 @@ class TestGrpcHealthProbe(unittest.TestCase):
         check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
         check.check(instance)
 
-        m_gauge.assert_any_call('network.grpc.can_connect', 0, tags=['addr:localhost:50051', 'service:helloworld.GreeterUnhealthy'])
+        expected_tags = ['addr:localhost:50051', 'service:helloworld.GreeterUnhealthy']
+        m_gauge.assert_any_call('network.grpc.can_connect', 0, tags=expected_tags)
 
     def test_grpc_health_probe_invalid_option(self):
         instance = {
@@ -61,5 +63,5 @@ class TestGrpcHealthProbe(unittest.TestCase):
         }
         check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
 
-        with self.assertRaises(CheckException) as e:
+        with self.assertRaises(CheckException):
             check.check(instance)

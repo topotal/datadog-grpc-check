@@ -4,6 +4,8 @@ from datadog_checks.base import AgentCheck, ConfigurationError
 from datadog_checks.base.errors import CheckException
 from datadog_checks.base.utils.subprocess_output import get_subprocess_output
 
+__version__ = "0.0.1"
+
 
 class GrpcCheck(AgentCheck):
 

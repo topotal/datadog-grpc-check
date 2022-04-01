@@ -78,10 +78,10 @@ class TestGrpcCheck(unittest.TestCase):
         expected = [
             'grpc-health-probe',
             '-addr', '192.0.2.10:50051',
-            '-service', 'helloworld.Greeter'
+            '-service', 'helloworld.Greeter',
             '-connect-timeout', '10s',
             '-rpc-timeout', '10s',
-        ].split(' ')
+        ]
         self.assertEqual(actual, expected)
 
     def test_get_tags(self):
@@ -147,5 +147,5 @@ class TestGrpcCheck(unittest.TestCase):
         }
         check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
 
-        with self.assertRaises(CheckException) as e:
+        with self.assertRaises(CheckException):
             check.check(instance)

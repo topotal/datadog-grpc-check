@@ -5,7 +5,7 @@ RUN wget -O /bin/grpc-health-probe https://github.com/grpc-ecosystem/grpc-health
 
 FROM gcr.io/datadoghq/agent:7
 
-COPY --from=download-grpc-health-probe /bin/grpc-health-probe /bin/grpc-health-probe
-RUN chmod +x /bin/grpc-health-probe
+COPY --from=download-grpc-health-probe /bin/grpc-health-probe /opt/datadog-agent/embedded/bin/grpc-health-probe
+RUN chmod +x /opt/datadog-agent/embedded/bin/grpc-health-probe
 
 COPY checks.d/grpc_check.py /checks.d/grpc_check.py

@@ -21,6 +21,7 @@ class GrpcCheck(AgentCheck):
         self.service = instance.get('service')
         self.connect_timeout = instance.get('connect_timeout', 10)
         self.rpc_timeout = instance.get('rpc_timeout', 10)
+        self.tags = instance.get('tags', [])
 
         if not self.server:
             raise ConfigurationError("'server' must be specified")
@@ -60,7 +61,8 @@ class GrpcCheck(AgentCheck):
         return command
 
     def _get_tags(self):
-        tags = ['addr:{}:{}'.format(self.server, self.port)]
+        tags = list(self.tags)
+        tags.append('addr:{}:{}'.format(self.server, self.port))
         if self.service:
             tags.append('service:{}'.format(self.service))
         return tags

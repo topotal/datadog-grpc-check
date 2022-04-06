@@ -25,6 +25,7 @@ class TestGrpcCheck(unittest.TestCase):
         self.assertEqual(check.service, 'helloworld.Greeter')
         self.assertEqual(check.connect_timeout, 10)
         self.assertEqual(check.rpc_timeout, 10)
+        self.assertEqual(check.tags, [])
 
     def test_constructor_param_timeout(self):
         instance = {
@@ -41,6 +42,21 @@ class TestGrpcCheck(unittest.TestCase):
         self.assertEqual(check.service, 'helloworld.Greeter')
         self.assertEqual(check.connect_timeout, 100)
         self.assertEqual(check.rpc_timeout, 200)
+        self.assertEqual(check.tags, [])
+
+    def test_constructor_param_tags(self):
+        instance = {
+            'server': '192.0.2.10',
+            'port': 50051,
+            'service': 'helloworld.Greeter',
+            'tags': ['key1:val1', 'key2:val2'],
+        }
+        check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
+
+        self.assertEqual(check.server, '192.0.2.10')
+        self.assertEqual(check.port, 50051)
+        self.assertEqual(check.service, 'helloworld.Greeter')
+        self.assertEqual(check.tags, ['key1:val1', 'key2:val2'])
 
     def test_constructor_server_not_specified(self):
         instance = {
@@ -94,6 +110,19 @@ class TestGrpcCheck(unittest.TestCase):
 
         actual = check._get_tags()
         expected = ['addr:192.0.2.10:50051', 'service:helloworld.Greeter']
+        self.assertListEqual(actual, expected)
+
+    def test_get_tags_tags_specified(self):
+        instance = {
+            'server': '192.0.2.10',
+            'port': 50051,
+            'service': 'helloworld.Greeter',
+            'tags': ['key1:val1', 'key2:val2'],
+        }
+        check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
+
+        actual = check._get_tags()
+        expected = ['key1:val1', 'key2:val2', 'addr:192.0.2.10:50051', 'service:helloworld.Greeter']
         self.assertListEqual(actual, expected)
 
     def test_get_tags_service_not_specified(self):

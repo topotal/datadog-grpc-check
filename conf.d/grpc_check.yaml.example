@@ -4,3 +4,13 @@ instances:
   - server: 192.0.2.10
     port: 50051
     service: helloworld.Greeter
+    tags:
+      - key1:val1
+      - key2:val2
+
+  - server: 192.0.2.11
+    port: 50051
+    service: helloworld.Greeter
+    tags:
+      - key3:val3
+      - key4:val4

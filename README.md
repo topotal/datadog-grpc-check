@@ -16,6 +16,7 @@ datadog-grpc-check uses [grpc-health-probe](https://github.com/grpc-ecosystem/gr
 | port (Required)   | Port to check. |
 | connect_timeout   | Value of `--connect-timeout` option of grpc-health-probe (second). see [grpc-ecosystem/grpc-health-probe](https://github.com/grpc-ecosystem/grpc-health-probe#other-available-flags) |
 | rpc_timeout       | Value of `--rpc-timeout` option of grpc-health-probe (second). see [grpc-ecosystem/grpc-health-probe](https://github.com/grpc-ecosystem/grpc-health-probe#other-available-flags) |
+| tags              | List of tags. |
 
 ## Metrics
 

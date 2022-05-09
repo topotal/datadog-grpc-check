@@ -11,6 +11,7 @@ class GrpcCheck(AgentCheck):
 
     METRICS_CAN_CONNECT = 'network.grpc.can_connect'
     METRICS_RESPONSE_TIME = 'network.grpc.response_time'
+    METRICS_GRPC_HEALTH_PROBE_STATUS = 'network.grpc.grpc_health_probe_status'
 
     def __init__(self, name, init_config, instances):
         super(GrpcCheck, self).__init__(name, init_config, instances)
@@ -21,6 +22,7 @@ class GrpcCheck(AgentCheck):
         self.service = instance.get('service')
         self.connect_timeout = instance.get('connect_timeout', 10)
         self.rpc_timeout = instance.get('rpc_timeout', 10)
+        self.collect_grpc_health_probe_status = instance.get('collect_grpc_health_probe_status', False)
         self.tags = instance.get('tags', [])
 
         if not self.server:
@@ -47,6 +49,10 @@ class GrpcCheck(AgentCheck):
             raise CheckException(err)
         else:
             self._gauge(self.METRICS_CAN_CONNECT, 0, tags=tags)
+
+        if self.collect_grpc_health_probe_status:
+            metric_name = "{}.{}".format(self.METRICS_GRPC_HEALTH_PROBE_STATUS, retcode)
+            self._gauge(metric_name, 1, tags=tags)
 
     def _build_command(self):
         addr = "{}:{}".format(self.server, self.port)

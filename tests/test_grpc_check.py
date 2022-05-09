@@ -58,6 +58,21 @@ class TestGrpcCheck(unittest.TestCase):
         self.assertEqual(check.service, 'helloworld.Greeter')
         self.assertEqual(check.tags, ['key1:val1', 'key2:val2'])
 
+    def test_constructor_param_collect_grpc_health_probe_status(self):
+        instance = {
+            'server': '192.0.2.10',
+            'port': 50051,
+            'service': 'helloworld.Greeter',
+            'collect_grpc_health_probe_status': True,
+        }
+        check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
+
+        self.assertEqual(check.server, '192.0.2.10')
+        self.assertEqual(check.port, 50051)
+        self.assertEqual(check.service, 'helloworld.Greeter')
+        self.assertEqual(check.tags, [])
+        self.assertEqual(check.collect_grpc_health_probe_status, True)
+
     def test_constructor_server_not_specified(self):
         instance = {
             'port': 50051,
@@ -164,6 +179,22 @@ class TestGrpcCheck(unittest.TestCase):
         check.check(instance)
 
         m_gauge.assert_any_call('network.grpc.can_connect', 0, tags=['addr:192.0.2.10:50051'])
+
+    @patch('grpc_check.GrpcCheck._gauge')
+    @patch('grpc_check.get_subprocess_output')
+    def test_check_grpc_health_probe_status_0(self, m_get_subprocess_output, m_gauge):
+        m_get_subprocess_output.return_value = (None, None, 0)
+
+        instance = {
+            'server': '192.0.2.10',
+            'port': 50051,
+            'collect_grpc_health_probe_status': True,
+        }
+        check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
+        check.check(instance)
+
+        m_gauge.assert_any_call('network.grpc.can_connect', 1, tags=['addr:192.0.2.10:50051'])
+        m_gauge.assert_any_call('network.grpc.grpc_health_probe_status.0', 1, tags=['addr:192.0.2.10:50051'])
 
     @patch('grpc_check.GrpcCheck._gauge')
     @patch('grpc_check.get_subprocess_output')

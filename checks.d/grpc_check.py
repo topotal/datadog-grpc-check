@@ -21,6 +21,7 @@ class GrpcCheck(AgentCheck):
         self.service = instance.get('service')
         self.connect_timeout = instance.get('connect_timeout', 10)
         self.rpc_timeout = instance.get('rpc_timeout', 10)
+        self.collect_grpc_health_probe_status = instance.get('collect_grpc_health_probe_status', False)
         self.tags = instance.get('tags', [])
 
         if not self.server:

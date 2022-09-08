@@ -57,7 +57,7 @@ class GrpcCheck(AgentCheck):
             self._gauge(self.METRICS_CAN_CONNECT, 0, tags=tags)
 
         if self.collect_grpc_health_probe_status:
-            self._gauge(self.METRICS_EXIT_CODE, retcode, tags= tags)
+            self._gauge(self.METRICS_EXIT_CODE, retcode, tags=tags)
             if retcode != 0:
                 self.count(self.METRICS_ERRORS, 1, tags=tags)
 

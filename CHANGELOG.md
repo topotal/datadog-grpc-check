@@ -12,6 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support grpc-health-probe CLI exit code.
   - It's enabled by `collect_grpc_health_probe_status` option, append two metrics.
 - New metrics
-  - `network.grpc.health.errors(gauge)`: is incremented when grpc-health-probe CLI return non-zero exit codes.
-  - `network.grpc.health.exit_code(count)`: grpc-health-probe CLI exit code
+  - `network.grpc.health.errors(count)`: is incremented when grpc-health-probe CLI return non-zero exit codes.
+  - `network.grpc.health.exit_code(gauge)`: grpc-health-probe CLI exit code
 

@@ -12,6 +12,11 @@ class GrpcCheck(AgentCheck):
     METRICS_CAN_CONNECT = 'network.grpc.can_connect'
     METRICS_RESPONSE_TIME = 'network.grpc.response_time'
 
+    METRICS_ERRORS = 'network.grpc.health.errors'
+    METRICS_EXIT_CODE = 'network.grpc.health.exit_code'
+
+    TAG_EXIT_CODE = 'grpc.health.exit_code'
+
     def __init__(self, name, init_config, instances):
         super(GrpcCheck, self).__init__(name, init_config, instances)
 
@@ -37,6 +42,7 @@ class GrpcCheck(AgentCheck):
         elapsed = time.time() - start
 
         tags = self._get_tags()
+        tags.append('{}:{}'.format(self.TAG_EXIT_CODE, retcode))
 
         # Handle exit codes.
         # see https://github.com/grpc-ecosystem/grpc-health-probe#exit-codes
@@ -45,9 +51,15 @@ class GrpcCheck(AgentCheck):
             # Only report response_time metrics if can connect gRPC endpoint
             self._gauge(self.METRICS_RESPONSE_TIME, elapsed, tags=tags)
         elif retcode == 1:
+            # failure: invalid command-line arguments
             raise CheckException(err)
         else:
             self._gauge(self.METRICS_CAN_CONNECT, 0, tags=tags)
+
+        if self.collect_grpc_health_probe_status:
+            self._gauge(self.METRICS_EXIT_CODE, retcode, tags= tags)
+            if retcode != 0:
+                self.count(self.METRICS_ERRORS, 1, tags=tags)
 
     def _build_command(self):
         addr = "{}:{}".format(self.server, self.port)

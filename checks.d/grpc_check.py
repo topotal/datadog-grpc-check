@@ -4,13 +4,18 @@ from datadog_checks.base import AgentCheck, ConfigurationError
 from datadog_checks.base.errors import CheckException
 from datadog_checks.base.utils.subprocess_output import get_subprocess_output
 
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 
 
 class GrpcCheck(AgentCheck):
 
     METRICS_CAN_CONNECT = 'network.grpc.can_connect'
     METRICS_RESPONSE_TIME = 'network.grpc.response_time'
+
+    METRICS_ERRORS = 'network.grpc.health.errors'
+    METRICS_EXIT_CODE = 'network.grpc.health.exit_code'
+
+    TAG_EXIT_CODE = 'grpc.health.exit_code'
 
     def __init__(self, name, init_config, instances):
         super(GrpcCheck, self).__init__(name, init_config, instances)
@@ -21,6 +26,7 @@ class GrpcCheck(AgentCheck):
         self.service = instance.get('service')
         self.connect_timeout = instance.get('connect_timeout', 10)
         self.rpc_timeout = instance.get('rpc_timeout', 10)
+        self.collect_grpc_health_probe_status = instance.get('collect_grpc_health_probe_status', False)
         self.tags = instance.get('tags', [])
 
         if not self.server:
@@ -44,9 +50,16 @@ class GrpcCheck(AgentCheck):
             # Only report response_time metrics if can connect gRPC endpoint
             self._gauge(self.METRICS_RESPONSE_TIME, elapsed, tags=tags)
         elif retcode == 1:
+            # failure: invalid command-line arguments
             raise CheckException(err)
         else:
             self._gauge(self.METRICS_CAN_CONNECT, 0, tags=tags)
+
+        if self.collect_grpc_health_probe_status:
+            self._gauge(self.METRICS_EXIT_CODE, retcode, tags=tags)
+            if retcode != 0:
+                exit_code_tag = '{}:{}'.format(self.TAG_EXIT_CODE, retcode)
+                self.count(self.METRICS_ERRORS, 1, tags=tags + [exit_code_tag])
 
     def _build_command(self):
         addr = "{}:{}".format(self.server, self.port)

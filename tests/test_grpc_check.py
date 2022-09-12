@@ -25,6 +25,7 @@ class TestGrpcCheck(unittest.TestCase):
         self.assertEqual(check.service, 'helloworld.Greeter')
         self.assertEqual(check.connect_timeout, 10)
         self.assertEqual(check.rpc_timeout, 10)
+        self.assertEqual(check.collect_grpc_health_probe_status, False)
         self.assertEqual(check.tags, [])
 
     def test_constructor_param_timeout(self):
@@ -57,6 +58,16 @@ class TestGrpcCheck(unittest.TestCase):
         self.assertEqual(check.port, 50051)
         self.assertEqual(check.service, 'helloworld.Greeter')
         self.assertEqual(check.tags, ['key1:val1', 'key2:val2'])
+
+    def test_constructor_param_collect_grpc_health_probe_status(self):
+        instance = {
+            'server': '192.0.2.10',
+            'port': 50051,
+            'service': 'helloworld.Greeter',
+            'collect_grpc_health_probe_status': True,
+        }
+        check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
+        self.assertEqual(check.collect_grpc_health_probe_status, True)
 
     def test_constructor_server_not_specified(self):
         instance = {

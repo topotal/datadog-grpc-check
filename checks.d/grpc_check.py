@@ -42,7 +42,6 @@ class GrpcCheck(AgentCheck):
         elapsed = time.time() - start
 
         tags = self._get_tags()
-        tags.append('{}:{}'.format(self.TAG_EXIT_CODE, retcode))
 
         # Handle exit codes.
         # see https://github.com/grpc-ecosystem/grpc-health-probe#exit-codes
@@ -59,7 +58,8 @@ class GrpcCheck(AgentCheck):
         if self.collect_grpc_health_probe_status:
             self._gauge(self.METRICS_EXIT_CODE, retcode, tags=tags)
             if retcode != 0:
-                self.count(self.METRICS_ERRORS, 1, tags=tags)
+                exit_code_tag = '{}:{}'.format(self.TAG_EXIT_CODE, retcode)
+                self.count(self.METRICS_ERRORS, 1, tags=tags + [exit_code_tag])
 
     def _build_command(self):
         addr = "{}:{}".format(self.server, self.port)

@@ -159,8 +159,8 @@ class TestGrpcCheck(unittest.TestCase):
         check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
         check.check(instance)
 
-        m_gauge.assert_any_call('network.grpc.can_connect', 1, tags=['addr:192.0.2.10:50051', 'grpc.health.exit_code:0'])
-        m_gauge.assert_any_call('network.grpc.response_time', ANY, tags=['addr:192.0.2.10:50051', 'grpc.health.exit_code:0'])
+        m_gauge.assert_any_call('network.grpc.can_connect', 1, tags=['addr:192.0.2.10:50051'])
+        m_gauge.assert_any_call('network.grpc.response_time', ANY, tags=['addr:192.0.2.10:50051'])
 
     @patch('grpc_check.GrpcCheck._gauge')
     @patch('grpc_check.get_subprocess_output')
@@ -174,7 +174,7 @@ class TestGrpcCheck(unittest.TestCase):
         check = grpc_check.GrpcCheck('grpc_check', {}, [instance])
         check.check(instance)
 
-        m_gauge.assert_any_call('network.grpc.can_connect', 0, tags=['addr:192.0.2.10:50051', 'grpc.health.exit_code:2'])
+        m_gauge.assert_any_call('network.grpc.can_connect', 0, tags=['addr:192.0.2.10:50051'])
 
     @patch('grpc_check.GrpcCheck._gauge')
     @patch('grpc_check.get_subprocess_output')

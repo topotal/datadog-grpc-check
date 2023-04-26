@@ -24,9 +24,11 @@ class GrpcCheck(AgentCheck):
         self.server = instance.get('server')
         self.port = instance.get('port')
         self.service = instance.get('service')
+        self.probe_extra_args = instance.get('probe_extra_args')
         self.connect_timeout = instance.get('connect_timeout', 10)
         self.rpc_timeout = instance.get('rpc_timeout', 10)
-        self.collect_grpc_health_probe_status = instance.get('collect_grpc_health_probe_status', False)
+        self.collect_grpc_health_probe_status = instance.get(
+            'collect_grpc_health_probe_status', False)
         self.tags = instance.get('tags', [])
 
         if not self.server:
@@ -38,7 +40,9 @@ class GrpcCheck(AgentCheck):
         command = self._build_command()
 
         start = time.time()
-        _, err, retcode = get_subprocess_output(command, self.log, raise_on_empty_output=False)
+        _, err, retcode = get_subprocess_output(command,
+                                                self.log,
+                                                raise_on_empty_output=False)
         elapsed = time.time() - start
 
         tags = self._get_tags()
@@ -68,9 +72,15 @@ class GrpcCheck(AgentCheck):
         if self.service:
             command = command + ['-service', self.service]
         if self.connect_timeout:
-            command = command + ['-connect-timeout', '{}s'.format(self.connect_timeout)]
+            command = command + [
+                '-connect-timeout', '{}s'.format(self.connect_timeout)
+            ]
         if self.rpc_timeout:
-            command = command + ['-rpc-timeout', '{}s'.format(self.rpc_timeout)]
+            command = command + [
+                '-rpc-timeout', '{}s'.format(self.rpc_timeout)
+            ]
+        if self.probe_extra_args:
+            command = command + self.probe_extra_args
         return command
 
     def _get_tags(self):

@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2023-04
+
+### Added
+- Support grpc-health-probe CLI extra arguments
+  - It's enabled by `probe_extra_args` option.
+
 ## [0.1.0] - 2022-09
 
 ### Added

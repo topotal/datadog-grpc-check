@@ -13,6 +13,8 @@ instances:
     port: 50051
     service: helloworld.Greeter
     collect_grpc_health_probe_status: False
+    probe_extra_args:
+    - "-tls"
     tags:
       - key3:val3
       - key4:val4
